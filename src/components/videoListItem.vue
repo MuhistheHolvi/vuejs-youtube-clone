@@ -1,6 +1,6 @@
 <template>
   <div>
-    <li class="list-group-item media">
+    <li class="list-group-item media" @click="onVideoSelect">
       <img class="mr-3" :src="imageUrl" alt="snippet.description" />
       <div class="media-body">
         {{ videoTitle }}
@@ -34,6 +34,11 @@ export default {
     },
     snippet() {
       return this.searchResultItem?.snippet;
+    },
+  },
+  methods: {
+    onVideoSelect() {
+      this.$emit("videoSelect", this.searchResultItem);
     },
   },
 };

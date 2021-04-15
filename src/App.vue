@@ -1,11 +1,12 @@
 <template>
   <div class="container">
     <search-bar @termChange="onTermChange"></search-bar>
+    <video-item :video="selectedVideo"></video-item>
     <video-list
       v-if="searchResults.length > 0"
       :videos="searchResults"
+      @videoSelect="onVideoSelect"
     ></video-list>
-    <div v-if="error.length">{{ error }}</div>
   </div>
 </template>
 
@@ -13,14 +14,21 @@
 import axios from "axios";
 import searchBar from "./components/searchBar";
 import VideoList from "./components/videoList";
+import videoItem from "./components/videoItem";
 const API_KEY = "AIzaSyBp75kKYtNjJINRh--Xy2D3jqtzDlMS_Ew";
 export default {
-  components: { searchBar, VideoList },
+  components: { searchBar, VideoList, videoItem },
   name: "App",
   data: () => {
-    return { searchResults: [], renderResults: false, error: {} };
+    return {
+      searchResults: [],
+      selectedVideo: null,
+    };
   },
   methods: {
+    onVideoSelect(video) {
+      this.selectedVideo = video;
+    },
     onTermChange(searchTerm) {
       axios
         .get("https://www.googleapis.com/youtube/v3/search", {
@@ -32,12 +40,7 @@ export default {
           },
         })
         .then((response) => {
-          if (response.data) {
-            this.updateVideoList(response);
-          }
-        })
-        .catch(function (error) {
-          console.log(error.response);
+          this.updateVideoList(response);
         });
     },
     updateVideoList(response) {
